@@ -14,6 +14,7 @@ module Logstash
           results.map{|r| get_ip_for_node(r)}
         else
           service_ip = get_ip_for_node(results[0], interface)
+        end
       else
         service_ip = get_attribute_or_default(node, instance, "#{service}_ip")
       end
