@@ -11,7 +11,7 @@ module Logstash
       Chef::Search::Query.new.search(:node, service_query) { |o| results << o }
       if !results.empty?
         if allow_multiple
-          results.map{|r| get_ip_for_node(r)}
+          results.map{|r| get_ip_for_node(r, interface)}
         else
           service_ip = get_ip_for_node(results[0], interface)
         end
