@@ -2,7 +2,7 @@
 # rubocop:disable RedundantReturn
 
 module Logstash
-  def self.service_ip(node, instance = 'default', service = 'elasticsearch', interface = nil)
+  def self.service_ip(node, instance = 'default', service = 'elasticsearch', interface = nil, allow_multiple = false)
     if Chef::Config[:solo]
       service_ip = get_attribute_or_default(node, instance, "#{service}_ip")
     else
@@ -10,7 +10,11 @@ module Logstash
       service_query = get_attribute_or_default(node, instance, "#{service}_query")
       Chef::Search::Query.new.search(:node, service_query) { |o| results << o }
       if !results.empty?
-        service_ip = get_ip_for_node(results[0], interface)
+        if allow_multiple
+          results.map{|r| get_ip_for_node(r)}
+        else
+          service_ip = get_ip_for_node(results[0], interface)
+        end
       else
         service_ip = get_attribute_or_default(node, instance, "#{service}_ip")
       end
